@@ -1,0 +1,379 @@
+{
+  "dummyData": {
+    "valid": [
+      {
+        "scenario": "Valid registration with all fields",
+        "request": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "password": "SecurePassword123",
+          "profileImageUrl": "https://example.com/images/john.jpg"
+        },
+        "expectedStatus": 201,
+        "description": "Complete valid registration with profile image"
+      },
+      {
+        "scenario": "Valid registration without profile image",
+        "request": {
+          "name": "Jane Smith",
+          "email": "jane.smith@example.com",
+          "password": "AnotherSecure456"
+        },
+        "expectedStatus": 201,
+        "description": "Valid registration with optional profileImageUrl omitted"
+      },
+      {
+        "scenario": "Valid registration - minimum name length",
+        "request": {
+          "name": "Jo",
+          "email": "jo@example.com",
+          "password": "ValidPass789"
+        },
+        "expectedStatus": 201,
+        "description": "Name with minimum allowed length (2 characters)"
+      },
+      {
+        "scenario": "Valid registration - maximum name length",
+        "request": {
+          "name": "VeryLongNameHere1",
+          "email": "longnameuser@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 201,
+        "description": "Name with maximum allowed length (15 characters)"
+      },
+      {
+        "scenario": "Valid registration - minimum password length",
+        "request": {
+          "name": "Robert",
+          "email": "robert@example.com",
+          "password": "MinPass8"
+        },
+        "expectedStatus": 201,
+        "description": "Password with minimum allowed length (8 characters)"
+      },
+      {
+        "scenario": "Valid registration - maximum password length",
+        "request": {
+          "name": "Michael",
+          "email": "michael@example.com",
+          "password": "MaxPasswordLength20Ch"
+        },
+        "expectedStatus": 201,
+        "description": "Password with maximum allowed length (20 characters)"
+      },
+      {
+        "scenario": "Valid registration - special characters in name",
+        "request": {
+          "name": "Jo-Anne O'Brien",
+          "email": "jo.anne@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 201,
+        "description": "Name with special characters (hyphen and apostrophe)"
+      },
+      {
+        "scenario": "Valid registration - numbers in name",
+        "request": {
+          "name": "John123Doe456",
+          "email": "john123@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 201,
+        "description": "Name containing numbers"
+      },
+      {
+        "scenario": "Valid registration - special characters in password",
+        "request": {
+          "name": "Sarah",
+          "email": "sarah@example.com",
+          "password": "P@ssw0rd!#$%^&*"
+        },
+        "expectedStatus": 201,
+        "description": "Password with special characters"
+      },
+      {
+        "scenario": "Valid registration - subdomain email",
+        "request": {
+          "name": "David",
+          "email": "david.smith+test@mail.example.co.uk",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 201,
+        "description": "Email with subdomain and plus sign"
+      }
+    ],
+    "invalid_name": [
+      {
+        "scenario": "Name is null",
+        "request": {
+          "name": null,
+          "email": "test@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name is required"
+      },
+      {
+        "scenario": "Name is blank (empty string)",
+        "request": {
+          "name": "",
+          "email": "test@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name is required"
+      },
+      {
+        "scenario": "Name is only whitespace",
+        "request": {
+          "name": "   ",
+          "email": "test@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name is required"
+      },
+      {
+        "scenario": "Name is too short (1 character)",
+        "request": {
+          "name": "J",
+          "email": "short@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name must be between 2 and 15 characters"
+      },
+      {
+        "scenario": "Name is too long (more than 15 characters)",
+        "request": {
+          "name": "VeryVeryLongNameThatExceedsLimit",
+          "email": "longname@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name must be between 2 and 15 characters"
+      }
+    ],
+    "invalid_email": [
+      {
+        "scenario": "Email is null",
+        "request": {
+          "name": "John Doe",
+          "email": null,
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email is required"
+      },
+      {
+        "scenario": "Email is blank (empty string)",
+        "request": {
+          "name": "John Doe",
+          "email": "",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email is required"
+      },
+      {
+        "scenario": "Email is only whitespace",
+        "request": {
+          "name": "John Doe",
+          "email": "   ",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email is required"
+      },
+      {
+        "scenario": "Email missing @ symbol",
+        "request": {
+          "name": "John Doe",
+          "email": "invalidemail.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email must be valid"
+      },
+      {
+        "scenario": "Email missing domain",
+        "request": {
+          "name": "John Doe",
+          "email": "john@",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email must be valid"
+      },
+      {
+        "scenario": "Email missing local part",
+        "request": {
+          "name": "John Doe",
+          "email": "@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email must be valid"
+      },
+      {
+        "scenario": "Email with multiple @ symbols",
+        "request": {
+          "name": "John Doe",
+          "email": "john@doe@example.com",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email must be valid"
+      },
+      {
+        "scenario": "Email missing top-level domain (TLD)",
+        "request": {
+          "name": "John Doe",
+          "email": "john@example",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "email must be valid"
+      }
+    ],
+    "invalid_password": [
+      {
+        "scenario": "Password is null",
+        "request": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "password": null
+        },
+        "expectedStatus": 400,
+        "errorMessage": "password is required"
+      },
+      {
+        "scenario": "Password is blank (empty string)",
+        "request": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "password": ""
+        },
+        "expectedStatus": 400,
+        "errorMessage": "password is required"
+      },
+      {
+        "scenario": "Password is only whitespace",
+        "request": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "password": "   "
+        },
+        "expectedStatus": 400,
+        "errorMessage": "password is required"
+      },
+      {
+        "scenario": "Password is too short (7 characters)",
+        "request": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "password": "Short1"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name must be between 8 and 20 characters"
+      },
+      {
+        "scenario": "Password is too long (more than 20 characters)",
+        "request": {
+          "name": "John Doe",
+          "email": "john.doe@example.com",
+          "password": "ThisIsAVeryLongPasswordThatExceedsMaximumLength"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "name must be between 8 and 20 characters"
+      }
+    ],
+    "invalid_combined": [
+      {
+        "scenario": "All required fields are null",
+        "request": {
+          "name": null,
+          "email": null,
+          "password": null
+        },
+        "expectedStatus": 400,
+        "errorMessage": "Multiple validation errors"
+      },
+      {
+        "scenario": "All required fields are blank",
+        "request": {
+          "name": "",
+          "email": "",
+          "password": ""
+        },
+        "expectedStatus": 400,
+        "errorMessage": "Multiple validation errors"
+      },
+      {
+        "scenario": "Name and email are invalid",
+        "request": {
+          "name": "X",
+          "email": "notanemail",
+          "password": "ValidPassword123"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "Multiple validation errors"
+      },
+      {
+        "scenario": "Name and password are invalid",
+        "request": {
+          "name": "VeryVeryLongNameThatExceedsTheMaximumLength",
+          "email": "valid@example.com",
+          "password": "Short"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "Multiple validation errors"
+      },
+      {
+        "scenario": "Email and password are invalid",
+        "request": {
+          "name": "Valid Name",
+          "email": "invalid.email.format",
+          "password": "Verylongpasswordthatexceedsmaximumlength"
+        },
+        "expectedStatus": 400,
+        "errorMessage": "Multiple validation errors"
+      }
+    ]
+  },
+  "curl_examples": {
+    "valid_request": "curl -X POST http://localhost:8080/api/auth/register -H \"Content-Type: application/json\" -d '{\"name\":\"John Doe\",\"email\":\"john.doe@example.com\",\"password\":\"SecurePassword123\",\"profileImageUrl\":\"https://example.com/images/john.jpg\"}'",
+    "valid_request_no_image": "curl -X POST http://localhost:8080/api/auth/register -H \"Content-Type: application/json\" -d '{\"name\":\"Jane Smith\",\"email\":\"jane.smith@example.com\",\"password\":\"AnotherSecure456\"}'",
+    "invalid_email": "curl -X POST http://localhost:8080/api/auth/register -H \"Content-Type: application/json\" -d '{\"name\":\"John Doe\",\"email\":\"invalid-email\",\"password\":\"SecurePassword123\"}'",
+    "invalid_password_short": "curl -X POST http://localhost:8080/api/auth/register -H \"Content-Type: application/json\" -d '{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"Short1\"}'"
+  },
+  "validation_rules": {
+    "name": {
+      "required": true,
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 15,
+      "errorMessage": "name must be between 2 and 15 characters"
+    },
+    "email": {
+      "required": true,
+      "type": "string",
+      "format": "email",
+      "errorMessage": "email must be valid"
+    },
+    "password": {
+      "required": true,
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 20,
+      "errorMessage": "name must be between 8 and 20 characters"
+    },
+    "profileImageUrl": {
+      "required": false,
+      "type": "string",
+      "format": "url",
+      "errorMessage": null
+    }
+  }
+}
