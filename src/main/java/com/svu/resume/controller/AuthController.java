@@ -1,5 +1,6 @@
 package com.svu.resume.controller;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -9,11 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.svu.resume.dto.AuthResponse;
 import com.svu.resume.dto.RegisterRequest;
 import com.svu.resume.service.AuthService;
+import com.svu.resume.service.FileUploadService;
 import static com.svu.resume.util.AppConstants.AUTH_CONTROLLER;
 import static com.svu.resume.util.AppConstants.REGISTER;
 import static com.svu.resume.util.AppConstants.VERIFY_EMAIL;
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(AUTH_CONTROLLER)
 public class AuthController {
     private final AuthService authService;
+    private final FileUploadService fileUploadService;
 
     @PostMapping(REGISTER)
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){ 
@@ -46,4 +51,10 @@ public class AuthController {
         String res=authService.verifyEmail(token);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message",res));  
     }
+    @PostMapping("/upload-image")
+    public ResponseEntity<?> uploadImage(@RequestPart MultipartFile file) throws IOException{
+        Map<String,String>result=fileUploadService.uploadSingleImage(file);
+        return ResponseEntity.ok(result);
+    }
+
 }
