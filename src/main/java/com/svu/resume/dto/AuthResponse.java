@@ -29,4 +29,8 @@ public class AuthResponse {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+    private String token;
+
+    
+    
 }

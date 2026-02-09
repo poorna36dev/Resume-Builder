@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.svu.resume.dto.AuthResponse;
+import com.svu.resume.dto.LoginRequest;
 import com.svu.resume.dto.RegisterRequest;
 import com.svu.resume.service.AuthService;
 import com.svu.resume.service.FileUploadService;
@@ -33,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
     private final AuthService authService;
     private final FileUploadService fileUploadService;
-
     @PostMapping(REGISTER)
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request){ 
         log.info("in authController-register()");     
@@ -52,9 +52,23 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message",res));  
     }
     @PostMapping("/upload-image")
-    public ResponseEntity<?> uploadImage(@RequestPart MultipartFile file) throws IOException{
-        Map<String,String>result=fileUploadService.uploadSingleImage(file);
+    public ResponseEntity<?> uploadImage(@RequestPart MultipartFile image) throws IOException{
+        Map<String,String>result=fileUploadService.uploadSingleImage(image);
         return ResponseEntity.ok(result);
     }
-
+    @PostMapping("login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest){
+        AuthResponse response = null;
+        try {
+            response = authService.login(loginRequest);
+            
+        } catch (Exception ex) {
+            System.getLogger(AuthController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/validate")
+    public String testValidationToken(String token){
+        return "token is validated";
+    }
 }

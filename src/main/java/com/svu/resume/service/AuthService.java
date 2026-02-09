@@ -4,13 +4,17 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.svu.resume.document.User;
 import com.svu.resume.dto.AuthResponse;
+import com.svu.resume.dto.LoginRequest;
 import com.svu.resume.dto.RegisterRequest;
 import com.svu.resume.exception.ResourceExistsException;
 import com.svu.resume.repository.UserRepository;
+import com.svu.resume.util.Jwtutil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
+    private final Jwtutil jwtUtil;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     @Value("${app.base.url}")
     private String appUrl;
     private final EmailService emailService;
@@ -85,7 +91,7 @@ public class AuthService {
         return User.builder()
             .name(request.getName())    
             .email(request.getEmail())  
-            .password(request.getPassword())
+            .password(passwordEncoder.encode(request.getPassword()))
             .profileImageUrl(request.getProfileImageUrl())
             .subscriptionPlan("basic")
             .emailVerified(false)
@@ -110,4 +116,19 @@ public class AuthService {
         userRepository.save(user);
         return "email verfied sucessfully";
     }
+    public AuthResponse login(LoginRequest request) throws Exception{
+        User existingUser=userRepository.findByEmail(request.getEmail())
+        .orElseThrow(()-> new UsernameNotFoundException("Invalid email or password"));
+        if(!passwordEncoder.matches(request.getPassword(),existingUser.getPassword())){
+            throw new UsernameNotFoundException("Invalid email or password");
+        }
+        if(existingUser.isEmailVerified()==false){
+            throw new RuntimeException("please verify the email");
+        }
+        String token=jwtUtil.generateToken(existingUser.getId());
+        AuthResponse value=toResponse(existingUser);
+        value.setToken(token);
+        return value;
+    }
+
 }
