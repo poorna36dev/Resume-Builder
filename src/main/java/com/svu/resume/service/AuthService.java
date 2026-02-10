@@ -12,6 +12,7 @@ import com.svu.resume.document.User;
 import com.svu.resume.dto.AuthResponse;
 import com.svu.resume.dto.LoginRequest;
 import com.svu.resume.dto.RegisterRequest;
+import com.svu.resume.exception.AlreadyVerfiedException;
 import com.svu.resume.exception.ResourceExistsException;
 import com.svu.resume.repository.UserRepository;
 import com.svu.resume.util.Jwtutil;
@@ -129,6 +130,21 @@ public class AuthService {
         AuthResponse value=toResponse(existingUser);
         value.setToken(token);
         return value;
+    }
+
+    public void resendVerification(String email) {
+        User user=userRepository.findByEmail(email).
+        orElseThrow(()->new RuntimeException("user not found"));
+        if(user.isEmailVerified()){
+            throw new AlreadyVerfiedException("user is already verfied");
+        }
+        user.setVerficationToken(UUID.randomUUID().toString());
+        user.setVerificationExpires(LocalDateTime.now().plusHours(24));
+        userRepository.save(user);
+        sendVerificationEmail(user);
+    }
+    public AuthResponse getProfile(User existingUser) {
+        return toResponse(existingUser);
     }
 
 }

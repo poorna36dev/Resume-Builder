@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         if(Id!=null && SecurityContextHolder.getContext().getAuthentication()==null){
             try{
                 log.info("Received token: {}", token);
-log.info("Extracted userId: {}", jwtUtil.getUserIdFromToken(token));
+                log.info("Extracted userId: {}", jwtUtil.getUserIdFromToken(token));
 
                 if(jwtUtil.validateToken(token) && !jwtUtil.isTokenExpired(token)){
                     User user=userRepository.findById(Id)

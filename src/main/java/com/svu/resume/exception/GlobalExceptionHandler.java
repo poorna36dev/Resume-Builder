@@ -46,4 +46,14 @@ public class GlobalExceptionHandler {
         response.put("errors","error occured");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+    @ExceptionHandler(AlreadyVerfiedException.class)
+    public ResponseEntity<?> handleAlreadyVerified(AlreadyVerfiedException ex){
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(Map.of(
+                    "success", false,
+                    "message", ex.getMessage()
+            ));
+}
+
 }

@@ -2,9 +2,11 @@ package com.svu.resume.controller;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.svu.resume.document.User;
 import com.svu.resume.dto.AuthResponse;
 import com.svu.resume.dto.LoginRequest;
 import com.svu.resume.dto.RegisterRequest;
@@ -67,8 +70,21 @@ public class AuthController {
         }
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/validate")
-    public String testValidationToken(String token){
-        return "token is validated";
+    @PostMapping("/resend-verfication")
+    public ResponseEntity<?> resendVerfication(@RequestBody Map<String,String> map){
+        String email=map.get("email");
+        if(Objects.isNull(email)){
+            return ResponseEntity.badRequest().body(Map.of("message","provide a valid email"));
+        }
+        authService.resendVerification(email);
+        return ResponseEntity.ok(Map.of("success",true,"message","verfication email sent successfully"));
+        
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(Authentication authentication){
+        User existingUser=(User) authentication.getPrincipal();
+        AuthResponse profile=authService.getProfile(existingUser);
+        return ResponseEntity.ok(profile);
+
     }
 }
